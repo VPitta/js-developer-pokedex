@@ -45,3 +45,35 @@ loadMoreButton.addEventListener('click', () => {
         loadPokemonItens(offset, limit)
     }
 })
+
+function mostrarDetalhes(id) {
+  fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+    .then(res => res.json())
+    .then(data => {
+      detailContainer.innerHTML = `
+        <div class="overlay active">
+          <div class="detail-card">
+            <button id="closeDetail">✖</button>
+            <h2>#${data.id} - ${data.name}</h2>
+            <img src="${data.sprites.front_default || ''}" alt="${data.name}">
+            <p><strong>Altura:</strong> ${data.height}</p>
+            <p><strong>Peso:</strong> ${data.weight}</p>
+            <p><strong>Tipos:</strong> ${data.types.map(t => t.type.name).join(', ')}</p>
+          </div>
+        </div>
+      `;
+
+      // fechar modal
+      document.getElementById('closeDetail').addEventListener('click', () => {
+        detailContainer.innerHTML = '';
+      });
+
+      // fechar clicando fora do card
+      document.querySelector('.overlay').addEventListener('click', (e) => {
+        if (e.target.classList.contains('overlay')) {
+          detailContainer.innerHTML = '';
+        }
+      });
+    })
+    .catch(err => console.error('Erro ao buscar detalhes', err));
+}
